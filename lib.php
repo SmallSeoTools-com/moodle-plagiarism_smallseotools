@@ -31,7 +31,6 @@ global $DB;
 require_once $CFG->dirroot.'/plagiarism/sst/constants.php';
 require_once $CFG->dirroot.'/plagiarism/lib.php';
 
-///// SST Class ////////////////////////////////////////////////////
 class plagiarism_plugin_sst extends plagiarism_plugin
 {
     /**
@@ -252,6 +251,11 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         }
     }
 
+    /**
+     * Get the supported mods for the plagiarism plugin.
+     *
+     * @return mixed an array of supported mods is returned
+     */
     public static function plagiarism_supported_mods()
     {
         $supported_mods = [];
@@ -265,6 +269,11 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         return $supported_mods;
     }
 
+    /**
+     * Get the config fields for the plagiarism plugin.
+     *
+     * @return mixed an array of config fields is returned
+     */
     public static function get_config_db_properties()
     {
         return [
@@ -620,6 +629,10 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         return true;
     }
 
+    /**
+     * Initialise submission values.
+     *
+     **/
     private function create_new_submission($cm, $userid, $identifier, $submissiontype, $studentread, $scheduledscandate)
     {
         global $DB;
@@ -644,6 +657,10 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         return $fileid;
     }
 
+    /**
+     * Reset submission values.
+     *
+     **/
     private function reset_submission($cm, $userid, $identifier, $currentsubmission, $submissiontype)
     {
         global $DB;
@@ -667,6 +684,16 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         }
     }
 
+    /**
+     * Retrieve previously made successful submissions that match passed in parameters. This
+     * avoids resubmitting them to SmallSEOTools.
+     *
+     * @param $author
+     * @param $cmid
+     * @param $identifier
+     *
+     * @return $plagiarismfiles - an array of succesfully submitted submissions
+     */
     public function plagiarism_sst_retrieve_successful_submissions($author, $cmid, $identifier)
     {
         global $CFG, $DB;
@@ -882,6 +909,13 @@ class plagiarism_plugin_sst extends plagiarism_plugin
             $submissiontype, $attempt, $studentread, $scheduledscandate, $errorcode, $errormsg);
     }
 
+    /**
+     * Amalgamated handler for Moodle cron events.
+     *
+     * @param object $eventdata
+     *
+     * @return bool result
+     */
     public function event_handler($eventdata)
     {
         global $DB;
@@ -1074,6 +1108,11 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         }
     }
 
+    /**
+     * @param object $eventdata Event data containing module update details.
+     *
+     * @return bool Returns true by default. Extend functionality as needed.
+     */
     public static function course_reset($eventdata)
     {
         global $DB, $CFG;
@@ -1382,6 +1421,10 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         }
     }
 
+    /**
+     * Clean up previous file submissions.
+     * Moodle will remove any old files or drafts during cron execution and file submission.
+     */
     private function clean_old_submissions($cm, $userid, $itemid, $submissiontype, $identifier)
     {
         global $DB, $CFG;
@@ -1483,7 +1526,11 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         return $file;
     }
 }
-
+/**
+ * @param object $eventdata Event data containing module update details.
+ *
+ * @return bool Returns true by default. Extend functionality as needed.
+ */
 function plagiarism_sst_event_file_uploaded($eventdata)
 {
     $result = true;
@@ -1491,6 +1538,11 @@ function plagiarism_sst_event_file_uploaded($eventdata)
 
     return $result;
 }
+/**
+ * @param object $eventdata Event data containing module update details.
+ *
+ * @return bool Returns true by default. Extend functionality as needed.
+ */
 function plagiarism_sst_event_files_done($eventdata)
 {
     $result = true;
@@ -1499,7 +1551,11 @@ function plagiarism_sst_event_files_done($eventdata)
 
     return $result;
 }
-
+/**
+ * @param object $eventdata Event data containing module update details.
+ *
+ * @return bool Returns true by default. Extend functionality as needed.
+ */
 function plagiarism_sst_event_mod_created($eventdata)
 {
     $result = true;
@@ -1508,7 +1564,11 @@ function plagiarism_sst_event_mod_created($eventdata)
 
     return $result;
 }
-
+/**
+ * @param object $eventdata Event data containing module update details.
+ *
+ * @return bool Returns true by default. Extend functionality as needed.
+ */
 function plagiarism_sst_event_mod_updated($eventdata)
 {
     $result = true;
@@ -1517,7 +1577,11 @@ function plagiarism_sst_event_mod_updated($eventdata)
 
     return $result;
 }
-
+/**
+ * @param object $eventdata Event data containing module update details.
+ *
+ * @return bool Returns true by default. Extend functionality as needed.
+ */
 function sst_event_mod_deleted($eventdata)
 {
     $result = true;
@@ -1574,7 +1638,17 @@ function plagiarism_sst_activitylog($string, $activity)
         fclose($file);
     }
 }
-
+/**
+ * Add the SmallSEOTools settings form to an add/edit activity page.
+ *
+ * @param moodleform_mod  $formwrapper
+ * @param MoodleQuickForm $mform
+ *
+ * @return type
+ */
+/**
+ * @var mixed $course
+ */
 function plagiarism_sst_coursemodule_standard_elements($formwrapper, $mform)
 {
     $sst_plugin = new plagiarism_plugin_sst();
@@ -1588,16 +1662,14 @@ function plagiarism_sst_coursemodule_standard_elements($formwrapper, $mform)
         isset($modulename) ? 'mod_'.$modulename : ''
     );
 }
-
+/**
+ * Handle saving data from the SmallSEOTools settings form.
+ *
+ * @param stdClass $data
+ * @param stdClass $course
+ */
 function plagiarism_sst_coursemodule_edit_post_actions($data, $course)
 {
     $sstplugin = new plagiarism_plugin_sst();
     $sstplugin->save_form_elements($data);
 }
-
- function dd($data = [])
- {
-     echo '<pre>';
-     print_r($data);
-     exit;
- }
