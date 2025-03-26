@@ -39,20 +39,20 @@
 }
 
 /* EXTRA STYLE - REMOVE IT*/
-.sst {
+.path-mod-assign .sst {
     display: flex;
     align-items: center;
     margin-top: 10px;
     min-width: 200px;
 }
 
-.sst .icon_size {
+.path-mod-assign .sst .icon_size {
     width: 20px;
     height: auto;
 }
-.sst span.high,
-.sst span.middle,
-.sst span.low {
+.path-mod-assign .sst span.high,
+.path-mod-assign .sst span.middle,
+.path-mod-assign .sst span.low {
     font-weight: 700;
     text-decoration: none;
 }
@@ -62,20 +62,20 @@
 
 
 
-.sst span.strong {
+.path-mod-assign .sst span.strong {
     font-weight: 500;
 }
 
-.sst-text-gray {
+.path-mod-assign .sst-text-gray {
     color: #1d2125;
 }
 
-.sst-text-warn {
+.path-mod-assign .sst-text-warn {
     color: #d30a0a;
     font-weight: 600;
 }
 
-.sst-student-disclosure {
+.path-mod-assign .sst-student-disclosure {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -85,21 +85,21 @@
     margin-bottom: 10px;
     margin-top: -16px;
 }
-.sst-student-disclosure-checkbox {
+.path-mod-assign .sst-student-disclosure-checkbox {
     margin-bottom: 0;
     margin-left: 5px;
 }
 
-.sst-edit-settings-note {
+.path-mod-assign .sst-edit-settings-note {
     font-weight: bold;
     margin-bottom: 10px;
 }
 
-a.sst-settings-link:hover {
+.path-mod-assign a.sst-settings-link:hover {
     text-decoration: none;
 }
 
-.sst-settings-btn {
+.path-mod-assign .sst-settings-btn {
     width: 180px;
     height: 36px;
     background-color: #17a1ff;
@@ -116,7 +116,7 @@ a.sst-settings-link:hover {
     align-items: center;
 }
 
-.sst-resubmit-button {
+.path-mod-assign .sst-resubmit-button {
     width: 72px;
     border-radius: 4px;
     background: #17a1ff;
@@ -129,7 +129,7 @@ a.sst-settings-link:hover {
     text-align: center;
 }
 
-.student-disclosure {
+.path-mod-assign .student-disclosure {
     display: flex;
     justify-content: center;
     align-items: center;

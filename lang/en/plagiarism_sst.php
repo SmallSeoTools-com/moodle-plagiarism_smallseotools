@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -13,7 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
+/*
  * @package   plagiarism_sst
  * @copyright 2023, SmallSEOTools <support@smallseotools.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -42,14 +43,11 @@ $string['similarity'] = 'Similarity';
 
 $string['studentdisclosure'] = 'Student disclosure';
 $string['studentdisclosure_help'] = 'This text will be displayed to all students on the file upload page.';
-$string['studentdisclosuredefault']  = '<span>By submitting your files you are agreeing to the plagiarism detection service </span><a target="_blank" href="https://sst.com/legal/privacypolicy">privacy policy</a>';
-$string['studentdagreedtoeula']  = '<span>You have already agreed to the plagiarism detection service </span><a target="_blank" href="https://sst.com/legal/privacypolicy">privacy policy</a>';
-
-
-
+$string['studentdisclosuredefault'] = '<span>By submitting your files you are agreeing to the plagiarism detection service </span><a target="_blank" href="https://sst.com/legal/privacypolicy">privacy policy</a>';
+$string['studentdagreedtoeula'] = '<span>You have already agreed to the plagiarism detection service </span><a target="_blank" href="https://sst.com/legal/privacypolicy">privacy policy</a>';
 
 $string['coursesettings'] = 'SmallSEOTools Settings';
-$string['draftsubmit'] = "Submit files only when students click the submit button";
+$string['draftsubmit'] = 'Submit files only when students click the submit button';
 $string['draftsubmit_help'] = "This option is only available if 'Require students to click the submit button' is Yes";
 $string['reportgenspeed'] = 'When to generate report?';
 $string['genereportimmediately'] = 'Generate reports immediately';
@@ -71,7 +69,6 @@ $string['inserterror'] = 'Error while trying to insert records to database';
 
 $string['digital_receipt_subject'] = 'SmallSEOTools Digital Receipt';
 $string['digital_receipt_message'] = 'Dear {$a->firstname} {$a->lastname},<br /><br />You have successfully submitted the file <strong>{$a->submission_title}</strong> to the assignment <strong>{$a->assignment_name}{$a->assignment_part}</strong> in the class <strong>{$a->course_fullname}</strong> on <strong>{$a->submission_date}</strong>. Your full digital receipt can be viewed and printed from the print/download button in the Document Viewer.<br /><br />Thank you for using SmallSEOTools,<br /><br />The SmallSEOTools Team';
-
 
 $string['errorcode0'] = 'This file has not been submitted to SmallSEOTools, please consult your system administrator';
 $string['errorcode1'] = 'This file has not been sent to SmallSEOTools as it does not have enough content to produce a Similarity Report.';
@@ -96,3 +93,20 @@ $string['cronsubmittedsuccessfully'] = 'Submission: {$a->title} ( ID: {$a->submi
 
 $string['messageprovider:submission'] = 'SmallSEOTools Plagiarism Plugin Digital Receipt notifications';
 
+$string['report_title'] = 'sst Report';
+
+$string['privacy:metadata:core_files'] = 'SmallSEOTools stores files that have been uploaded to Moodle to form a SmallSEOTools submission.';
+$string['privacy:metadata:plagiarism_sst_files'] = 'Information that links a Moodle submission to a SmallSEOTools submission.';
+$string['privacy:metadata:plagiarism_sst_files:userid'] = 'The ID of the user who is the owner of the submission.';
+$string['privacy:metadata:plagiarism_sst_files:submitter'] = 'The ID of the user who has made the submission.';
+$string['privacy:metadata:plagiarism_sst_files:similarityscore'] = 'The similarity score of the submission.';
+$string['privacy:metadata:plagiarism_sst_files:lastmodified'] = 'A timestamp indicating when the user last modified their submission.';
+$string['privacy:metadata:plagiarism_sst_client'] = 'In order to integrate with a SmallSEOTools, some user data needs to be exchanged with SmallSEOTools.';
+$string['privacy:metadata:plagiarism_sst_client:module_id'] = 'The module id is sent to SmallSEOTools for identification purposes.';
+$string['privacy:metadata:plagiarism_sst_client:module_name'] = 'The module name is sent to SmallSEOTools for identification purposes.';
+$string['privacy:metadata:plagiarism_sst_client:module_type'] = 'The module type is sent to SmallSEOTools for identification purposes.';
+$string['privacy:metadata:plagiarism_sst_client:module_creationtime'] = 'The module creation time is sent to SmallSEOTools for identification purposes.';
+$string['privacy:metadata:plagiarism_sst_client:submittion_userId'] = 'The submission userId is sent to SmallSEOTools for identification purposes.';
+$string['privacy:metadata:plagiarism_sst_client:submittion_name'] = 'The submission name is sent to SmallSEOTools for identification purposes.';
+$string['privacy:metadata:plagiarism_sst_client:submittion_type'] = 'The submission type is sent to SmallSEOTools for identification purposes.';
+$string['privacy:metadata:plagiarism_sst_client:submittion_content'] = 'The submission content is sent to SmallSEOTools for scan processing.';
