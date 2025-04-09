@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/*
  * @package   plagiarism_sst
  * @copyright 2023, SmallSEOTools <support@smallseotools.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,14 +28,9 @@ if (!defined('MOODLE_INTERNAL')) {
 // Constants.
 const PLAGIARISM_SST_MAX_FILE_UPLOAD_SIZE = 104857600;
 const PLAGIARISM_SST_CRON_SUBMISSIONS_LIMIT = 100;
-const ACCEPTED_FILE_EXTS = array('.doc', '.docx', '.ppt', '.pptx', '.pps', '.ppsx',
+const ACCEPTED_FILE_EXTS = ['.doc', '.docx', '.ppt', '.pptx', '.pps', '.ppsx',
     '.pdf', '.txt', '.htm', '.html', '.hwp', '.odt',
-    '.wpd', '.ps', '.rtf', '.xls', '.xlsx');
+    '.wpd', '.ps', '.rtf', '.xls', '.xlsx', ];
 const PLAGIARISM_SST_API_BASE_URL = 'http://v2.smallseotools.com';
 const PLAGIARISM_SST_PENDING_STATUS = 'pending';
 const PLAGIARISM_SST_QUEUED_STATUS = 'queued';
-const TABLE_SST_FILES = 'plagiarism_sst_files';
-const TABLE_SST_CONFIG = 'plagiarism_sst_config';
-const TABLE_SST_USERS = 'plagiarism_sst_users';
-
-

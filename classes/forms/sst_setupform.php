@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/*
  * @package   plagiarism_sst
  * @copyright 2023, SmallSEOTools <support@smallseotools.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,13 +24,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot.'/plagiarism/sst/lib.php');
-require_once($CFG->libdir."/formslib.php");
+require_once $CFG->dirroot.'/plagiarism/sst/lib.php';
+require_once $CFG->libdir.'/formslib.php';
 
-class sst_setupform extends moodleform {
-
+class sst_setupform extends moodleform
+{
     // Define the form.
-    public function definition() {
+    public function definition()
+    {
         global $DB, $CFG;
 
         $mform = $this->_form;
@@ -49,7 +51,7 @@ class sst_setupform extends moodleform {
                     get_string('usesst_mod', 'plagiarism_sst', ucfirst($mod)),
                     '',
                     null,
-                    array(0, 1)
+                    [0, 1]
                 );
             }
         }
@@ -72,18 +74,17 @@ class sst_setupform extends moodleform {
         $mform->setType('plagiarism_sst_publickey', PARAM_TEXT);
         $mform->addElement('passwordunmask', 'plagiarism_sst_secretkey', get_string('sstsecretkey', 'plagiarism_sst'));
 
-//        $mform->addElement('button', 'connection_test', get_string("connecttest", 'plagiarism_sst'));
-
         $this->add_action_buttons();
     }
 
     /**
      * Display the form, saving the contents of the output buffer overriding Moodle's
-     * display function that prints to screen when called
+     * display function that prints to screen when called.
      *
      * @return the form as an object to print to screen at our convenience
      */
-    public function display() {
+    public function display()
+    {
         ob_start();
         parent::display();
         $form = ob_get_contents();
@@ -93,22 +94,22 @@ class sst_setupform extends moodleform {
     }
 
     /**
-     * Save the plugin config data
+     * Save the plugin config data.
      */
-    public function save($data) {
+    public function save($data)
+    {
         global $CFG;
         global $DB;
-
 
         // Save whether the plugin is enabled for individual modules.
         $mods = array_keys(core_component::get_plugin_list('mod'));
         $pluginenabled = 0;
         foreach ($mods as $mod) {
             if (plugin_supports('mod', $mod, FEATURE_PLAGIARISM)) {
-                $property = "plagiarism_sst_mod_" . $mod;
-                ${ "plagiarism_sst_mod_" . "$mod" } = (!empty($data->$property)) ? $data->$property : 0;
-                set_config('plagiarism_sst_mod_'.$mod, ${ "plagiarism_sst_mod_" . "$mod" }, 'plagiarism_sst');
-                if (${ "plagiarism_sst_mod_" . "$mod" }) {
+                $property = 'plagiarism_sst_mod_'.$mod;
+                ${ 'plagiarism_sst_mod_'."$mod" } = (!empty($data->$property)) ? $data->$property : 0;
+                set_config('plagiarism_sst_mod_'.$mod, ${ 'plagiarism_sst_mod_'."$mod" }, 'plagiarism_sst');
+                if (${ 'plagiarism_sst_mod_'."$mod" }) {
                     $pluginenabled = 1;
                 }
             }
@@ -118,13 +119,12 @@ class sst_setupform extends moodleform {
         $defaultfield = new stdClass();
         $defaultfield->name = 'plagiarism_sst_enable';
         $defaultfield->value = $pluginenabled;
-        $id = $DB->get_field(TABLE_SST_CONFIG, 'id', (array('cm' => null, 'name' => 'plagiarism_sst_enable')));
-        if($id) {
+        $id = $DB->get_field('plagiarism_sst_config', 'id', (['cm' => null, 'name' => 'plagiarism_sst_enable']));
+        if ($id) {
             $defaultfield->id = $id;
-            $DB->update_record(TABLE_SST_CONFIG, $defaultfield);
-        }
-        else {
-            $DB->insert_record(TABLE_SST_CONFIG, $defaultfield);
+            $DB->update_record('plagiarism_sst_config', $defaultfield);
+        } else {
+            $DB->insert_record('plagiarism_sst_config', $defaultfield);
         }
 
         // misc configs
@@ -133,10 +133,10 @@ class sst_setupform extends moodleform {
         if ($CFG->branch < 39) {
             set_config('sst_use', $pluginenabled, 'plagiarism');
         }
-        $properties = array("publickey", "secretkey", "studentdisclosure");
+        $properties = ['publickey', 'secretkey', 'studentdisclosure'];
 
         foreach ($properties as $property) {
-            $property = "plagiarism_sst_".$property;
+            $property = 'plagiarism_sst_'.$property;
             set_config($property, $data->$property, 'plagiarism_sst');
         }
     }

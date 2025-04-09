@@ -31,6 +31,11 @@ $modulename = required_param('modulename', PARAM_TEXT);
 $viewmode = optional_param('view', 'course', PARAM_TEXT);
 $errormessagestyle = 'color:red; display:flex; width:100%; justify-content:center;';
 
+// Ensure the current user is either the same as the userid OR has capability to view reports for others.
+if ($USER->id != $userid && !has_capability('plagiarism/sst:viewfullreport', $context)) {
+    throw new required_capability_exception($context, 'plagiarism/sst:viewfullreport', 'nopermissions', '');
+}
+
 // Get instance modules.
 $cm = get_coursemodule_from_id($modulename, $cmid, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -54,13 +59,7 @@ $PAGE->set_url('/moodle/plagiarism/sst/plagiarism_sst_report.php', [
 // Setup page title and header.
 $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
 $fs = get_file_storage();
-//$file = $fs->get_file_by_hash($identifier);
-//if ($file) {
-//    $filename = $file->get_filename();
-//    $pagetitle = get_string('reportpagetitle', 'plagiarism_sst') . ' - ' . fullname($user) . ' - ' . $filename;
-//} else {
 $pagetitle = get_string('reportpagetitle', 'plagiarism_sst').' - '.fullname($user);
-//}
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($pagetitle);
 
@@ -69,12 +68,11 @@ if ($viewmode == 'course') {
 }
 
 // sst course settings.
-$modulesettings = $DB->get_records_menu(TABLE_SST_CONFIG, ['cm' => $cmid], '', 'name,value');
+$modulesettings = $DB->get_records_menu('plagiarism_sst_config', ['cm' => $cmid], '', 'name,value');
 
 $isinstructor = plagiarism_plugin_sst::is_instructor($context);
 
 $moduleenabled = 1;
-//$moduleenabled = plagiarism_plugin_sst::is_plugin_configured('mod_' . $cm->modname);
 
 // Check if sst plugin is disabled.
 if (empty($moduleenabled) || empty($modulesettings['plagiarism_sst_enable'])) {

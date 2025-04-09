@@ -89,7 +89,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         static $modulesettings;
         if (empty($clmodulesettings)) {
             $modulesettings = $DB->get_records_menu(
-                TABLE_SST_CONFIG,
+                'plagiarism_sst_config',
                 ['cm' => $linkarray['cmid']],
                 '',
                 'name,value'
@@ -137,10 +137,9 @@ class plagiarism_plugin_sst extends plagiarism_plugin
             return;
         }
 
-        $result = $DB->get_records(TABLE_SST_FILES, ['cm' => $cmid, 'userid' => $userid, 'identifier' => $identifier],
+        $result = $DB->get_records('plagiarism_sst_files', ['cm' => $cmid, 'userid' => $userid, 'identifier' => $identifier],
             'lastmodified DESC', '*'
         );
-        //dd($result);
 
         $submittedfile = current($result);
 
@@ -216,7 +215,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
 
         // Get saved db settings.
         $cmid = $data->coursemodule;
-        $saveddefaultvalue = $DB->get_records_menu(TABLE_SST_CONFIG, ['cm' => $cmid], '', 'name,value');
+        $saveddefaultvalue = $DB->get_records_menu('plagiarism_sst_config', ['cm' => $cmid], '', 'name,value');
 
         // Db settings elements name.
         $configfields = self::get_config_db_properties();
@@ -231,19 +230,19 @@ class plagiarism_plugin_sst extends plagiarism_plugin
 
                 if (!isset($saveddefaultvalue[$f])) {
                     $savedfield->config_hash = $savedfield->cm.'_'.$savedfield->name;
-                    if (!$DB->insert_record(TABLE_SST_CONFIG, $savedfield)) {
+                    if (!$DB->insert_record('plagiarism_sst_config', $savedfield)) {
                         throw new moodle_exception(get_string('inserterror', 'plagiarism_sst'));
                     }
                 } else {
                     $savedfield->id = $DB->get_field(
-                        TABLE_SST_CONFIG,
+                        'plagiarism_sst_config',
                         'id',
                         ([
                             'cm' => $cmid,
                             'name' => $f,
                         ])
                     );
-                    if (!$DB->update_record(TABLE_SST_CONFIG, $savedfield)) {
+                    if (!$DB->update_record('plagiarism_sst_config', $savedfield)) {
                         throw new moodle_exception(get_string('updateerror', 'plagiarism_sst'));
                     }
                 }
@@ -365,7 +364,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
             );
 
             $cmid = optional_param('update', null, PARAM_INT);
-            $savedvalues = $DB->get_records_menu(TABLE_SST_CONFIG, ['cm' => $cmid], '', 'name,value');
+            $savedvalues = $DB->get_records_menu('plagiarism_sst_config', ['cm' => $cmid], '', 'name,value');
 
             if (count($savedvalues) > 0) {
                 $mform->setDefault(
@@ -412,7 +411,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
 
         // Get course module SST settings.
         $modulesettings = $DB->get_records_menu(
-            TABLE_SST_CONFIG,
+            plagiarism_sst_config,
             ['cm' => $cmid],
             '',
             'name,value'
@@ -549,8 +548,8 @@ class plagiarism_plugin_sst extends plagiarism_plugin
     public function get_settings($cmid = null, $uselockedvalues = true)
     {
         global $DB;
-        $defaults = $DB->get_records_menu(TABLE_SST_CONFIG, ['cm' => null], '', 'name,value');
-        $settings = $DB->get_records_menu(TABLE_SST_CONFIG, ['cm' => $cmid], '', 'name,value');
+        $defaults = $DB->get_records_menu('plagiarism_sst_config', ['cm' => null], '', 'name,value');
+        $settings = $DB->get_records_menu('plagiarism_sst_config', ['cm' => $cmid], '', 'name,value');
 
         // Don't overwrite settings with locked values (only relevant on inital module creation).
         if ($uselockedvalues == false) {
@@ -594,7 +593,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
     public function upsert_user_eula($userid)
     {
         global $DB;
-        $id = $DB->get_field(TABLE_SST_USERS, 'id', (['userid' => $userid]));
+        $id = $DB->get_field('plagiarism_sst_users', 'id', (['userid' => $userid]));
 
         $defaultfield = new stdClass();
         $defaultfield->userid = $userid;
@@ -602,9 +601,9 @@ class plagiarism_plugin_sst extends plagiarism_plugin
 
         if ($id) {
             $defaultfield->id = $id;
-            $DB->update_record(TABLE_SST_USERS, $defaultfield);
+            $DB->update_record('plagiarism_sst_users', $defaultfield);
         } else {
-            $DB->insert_record(TABLE_SST_USERS, $defaultfield);
+            $DB->insert_record('plagiarism_sst_users', $defaultfield);
         }
 
         return true;
@@ -621,7 +620,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
     {
         global $DB;
 
-        $user = $DB->get_record(TABLE_SST_USERS, ['userid' => $userid]);
+        $user = $DB->get_record('plagiarism_sst_users', ['userid' => $userid]);
         if (!$user || !isset($user)) {
             return false;
         }
@@ -649,7 +648,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         $plagiarismfile->studentread = $studentread;
         $plagiarismfile->duedatescan = $scheduledscandate;
 
-        if (!$fileid = $DB->insert_record(TABLE_SST_FILES, $plagiarismfile)) {
+        if (!$fileid = $DB->insert_record('plagiarism_sst_files', $plagiarismfile)) {
             plagiarism_sst_activitylog('Insert record failed (CM: '.$cm->id.', User: '.$userid.')', 'PP_NEW_SUB');
             $fileid = 0;
         }
@@ -679,7 +678,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         $plagiarismfile->errormsg = null;
         $plagiarismfile->errorcode = null;
 
-        if (!$DB->update_record(TABLE_SST_FILES, $plagiarismfile)) {
+        if (!$DB->update_record('plagiarism_sst_files', $plagiarismfile)) {
             plagiarism_sst_activitylog('Update record failed (CM: '.$cm->id.', User: '.$userid.')', 'PP_REPLACE_SUB');
         }
     }
@@ -703,7 +702,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         $typefield = ($CFG->dbtype == 'oci') ? ' to_char(statuscode) ' : ' statuscode ';
 
         $plagiarismfiles = $DB->get_records_select(
-            TABLE_SST_FILES,
+            'plagiarism_sst_files',
             ' userid = ? AND cm = ? AND identifier = ? AND '.$typefield.' '.$insql,
             array_merge([$author, $cmid, $identifier], $inparams)
         );
@@ -756,21 +755,11 @@ class plagiarism_plugin_sst extends plagiarism_plugin
             // Group submissions require userid = 0 when checking assign_submission.
             $userid = ($moduledata->teamsubmission) ? 0 : $author;
 
-            if (!isset($_SESSION['moodlesubmissionstatus'])) {
-                $_SESSION['moodlesubmissionstatus'] = null;
-            }
-
             if ($eventtype == 'content_uploaded' || $eventtype == 'file_uploaded') {
                 $moodlesubmission = $DB->get_record('assign_submission',
                     ['assignment' => $cm->instance,
                         'userid' => $userid,
                         'id' => $itemid, ], 'status');
-
-                $_SESSION['moodlesubmissionstatus'] = $moodlesubmission->status;
-            }
-
-            if ($eventtype != 'content_uploaded' && $eventtype != 'file_uploaded') {
-                unset($_SESSION['moodlesubmissionstatus']);
             }
         } else {
             $userid = $author;
@@ -813,7 +802,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
                 $typefield = ($CFG->dbtype == 'oci') ? ' to_char(submissiontype) ' : ' submissiontype ';
 
                 // Check if this content/file has been submitted previously.
-                $previoussubmissions = $DB->get_records_select(TABLE_SST_FILES,
+                $previoussubmissions = $DB->get_records_select('plagiarism_sst_files',
                     ' cm = ? AND userid = ? AND '.$typefield.' = ? AND identifier = ?',
                     [$cm->id, $author, $submissiontype, $identifier],
                     'id', $submissionfields);
@@ -842,7 +831,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
                 } else {
                     // Check if there is previous submission of different content which we may be able to replace.
                     $typefield = ($CFG->dbtype == 'oci') ? ' to_char(submissiontype) ' : ' submissiontype ';
-                    if ($previoussubmission = $DB->get_record_select(TABLE_SST_FILES,
+                    if ($previoussubmission = $DB->get_record_select('plagiarism_sst_files',
                         ' cm = ? AND userid = ? AND '.$typefield.' = ?',
                         [$cm->id, $author, $submissiontype],
                         'id, cm, externalid, identifier, statuscode, lastmodified, attempt')) {
@@ -865,7 +854,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
 
             case 'forum_post':
             case 'quiz_answer':
-                if ($previoussubmissions = $DB->get_records_select(TABLE_SST_FILES,
+                if ($previoussubmissions = $DB->get_records_select('plagiarism_sst_files',
                     ' cm = ? AND userid = ? AND identifier = ? ',
                     [$cm->id, $author, $identifier],
                     'id DESC', 'id, cm, externalid, identifier, statuscode, attempt', 0, 1)) {
@@ -1151,11 +1140,11 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         $plagiarismfile->duedatescan = $scheduledscandate;
 
         if ($submissionid != 0) {
-            if (!$DB->update_record(TABLE_SST_FILES, $plagiarismfile)) {
+            if (!$DB->update_record('plagiarism_sst_files', $plagiarismfile)) {
                 plagiarism_sst_activitylog('Update record failed (CM: '.$cm->id.', User: '.$userid.') - ', 'PP_UPDATE_SUB_ERROR');
             }
         } else {
-            if (!$DB->insert_record(TABLE_SST_FILES, $plagiarismfile)) {
+            if (!$DB->insert_record('plagiarism_sst_files', $plagiarismfile)) {
                 plagiarism_sst_activitylog('Insert record failed (CM: '.$cm->id.', User: '.$userid.') - ', 'PP_INSERT_SUB_ERROR');
             }
         }
@@ -1176,7 +1165,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         $plagiarismfile->attempt = $attempt + 1;
         $plagiarismfile->errorcode = $errorcode;
 
-        if (!$DB->update_record(TABLE_SST_FILES, $plagiarismfile)) {
+        if (!$DB->update_record('plagiarism_sst_files', $plagiarismfile)) {
             plagiarism_sst_activitylog('Update record failed (Submission: '.$submissionid.') - ', 'PP_UPDATE_SUB_ERROR');
         }
 
@@ -1193,13 +1182,9 @@ class plagiarism_plugin_sst extends plagiarism_plugin
         $config = self::plagiarism_sst_admin_config();
 
         // Don't attempt to call  if a connection to sst could not be established.
-//    if (!$this->test_SST_connection()) {
-//        mtrace(get_string('ppeventsfailedconnection', 'plagiarism_sst'));
-//        return;
-//    }
 
         $currentdate = strtotime('now');
-        $queueditems = $DB->get_records_select(TABLE_SST_FILES, '(statuscode = ? OR statuscode = ?) AND duedatescan < ?  ',
+        $queueditems = $DB->get_records_select('plagiarism_sst_files', '(statuscode = ? OR statuscode = ?) AND duedatescan < ?  ',
             [PLAGIARISM_SST_QUEUED_STATUS, PLAGIARISM_SST_PENDING_STATUS, $currentdate], 'lastmodified', '*', 0, PLAGIARISM_SST_CRON_SUBMISSIONS_LIMIT);
 
         // Submit each file individually to SST.
@@ -1254,9 +1239,6 @@ class plagiarism_plugin_sst extends plagiarism_plugin
             }
 
             // Don't submit if a user has not accepted the eula.
-//        if ($queueditem->userid == $queueditem->submitter && $user->useragreementaccepted != 1) {
-//            $errorcode = 3;
-//        }
 
             if (!empty($errorcode)) {
                 // Save failed submission if user can not be joined to class or there was an error with the assignment.
@@ -1409,7 +1391,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
                 $plagiarismfile->attempt = $queueditem->attempt;
                 $plagiarismfile->externalid = $response_data->hash;
                 $plagiarismfile->reporturl = isset($response_data->report_url) ? $response_data->report_url : PLAGIARISM_SST_API_BASE_URL.'/plag/scan/mdl/report/'.$response_data->hash;
-                $DB->update_record(TABLE_SST_FILES, $plagiarismfile);
+                $DB->update_record('plagiarism_sst_files', $plagiarismfile);
             }
 
             $outputvars = new stdClass();
@@ -1473,7 +1455,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
                 $params, 'id DESC', 'pathnamehash')) {
                 list($notinsql, $notinparams) = $DB->get_in_or_equal(array_keys($moodlefiles), SQL_PARAMS_QM, 'param', false);
                 $typefield = ($CFG->dbtype == 'oci') ? ' to_char(submissiontype) ' : ' submissiontype ';
-                $oldfiles = $DB->get_records_select(TABLE_SST_FILES, ' userid = ? AND cm = ? '.
+                $oldfiles = $DB->get_records_select('plagiarism_sst_files', ' userid = ? AND cm = ? '.
                     ' AND '.$typefield.' = ? AND identifier '.$notinsql,
                     array_merge([$userid, $cm->id, 'file'], $notinparams));
 
@@ -1494,7 +1476,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
 
         // Delete from database.
         if (!empty($deletestr)) {
-            if (!$DB->delete_records_select(TABLE_SST_FILES, $deletestr, $deleteparams)) {
+            if (!$DB->delete_records_select('plagiarism_sst_files', $deletestr, $deleteparams)) {
                 throw new moodle_exception('not deleted');
             }
         }
@@ -1582,7 +1564,7 @@ function plagiarism_sst_event_mod_updated($eventdata)
  *
  * @return bool Returns true by default. Extend functionality as needed.
  */
-function sst_event_mod_deleted($eventdata)
+function plagiarism_sst_event_mod_deleted($eventdata)
 {
     $result = true;
     //a module has been deleted - this is a generic event that is called for all module types
@@ -1596,7 +1578,7 @@ function sst_event_mod_deleted($eventdata)
  *
  * @param string $string   The string describing the activity
  * @param string $activity The activity prompting the log
- *                         e.g. PRINT_ERROR (default), API_ERROR, INCLUDE, REQUIRE_ONCE, REQUEST, REDIRECT
+ *e.g. PRINT_ERROR (default), API_ERROR, INCLUDE, REQUIRE_ONCE, REQUEST, REDIRECT
  */
 function plagiarism_sst_activitylog($string, $activity)
 {
