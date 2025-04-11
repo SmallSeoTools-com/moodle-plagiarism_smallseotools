@@ -25,6 +25,7 @@
 namespace plagiarism_sst\privacy;
 
 use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\userlist;
@@ -238,17 +239,16 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
 
         list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
 
-        $sql1 = "SELECT pts.id
-                   FROM {plagiarism_sst_files} ptf
+        $sql1 = "SELECT psf.id
+                   FROM {plagiarism_sst_files} psf
                    JOIN {course_modules} c 
-                     ON ptf.cm = c.id
+                     ON psf.cm = c.id
                    JOIN {modules} m 
-                     ON m.id = c.module AND m.name = :modname
-                  WHERE pts.userid $insql
+                     ON m.id = c.module
+                  WHERE psf.userid $insql
                     AND c.id = :cmid";
 
         $params = [
-            'modname' => 'plagiarism_sst',
             'cmid' => $context->instanceid,
         ];
 
@@ -256,6 +256,6 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
 
         $attempt = $DB->get_fieldset_sql($sql1, $params);
 
-        $DB->delete_records_list('plagiarism_sst', 'id', array_values($attempt));
+        $DB->delete_records_list('plagiarism_sst_files', 'id', array_values($attempt));
     }
 }
