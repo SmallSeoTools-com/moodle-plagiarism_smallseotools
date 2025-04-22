@@ -25,11 +25,10 @@ require_once __DIR__.'/../../config.php';
 require_once $CFG->libdir.'/adminlib.php';
 require_once $CFG->libdir.'/plagiarismlib.php';
 require_once $CFG->dirroot.'/plagiarism/sst/lib.php';
-require_once $CFG->dirroot.'/plagiarism/sst/classes/forms/sst_setupform.php';
+require_once $CFG->dirroot.'/plagiarism/sst/classes/sst_view.class.php';
 
 require_login();
 
-// Setup admin external page.
 admin_externalpage_setup('plagiarismsst');
 
 $context = context_system::instance();
