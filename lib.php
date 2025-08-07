@@ -411,7 +411,7 @@ class plagiarism_plugin_sst extends plagiarism_plugin
 
         // Get course module SST settings.
         $modulesettings = $DB->get_records_menu(
-            plagiarism_sst_config,
+            'plagiarism_sst_config',
             ['cm' => $cmid],
             '',
             'name,value'
